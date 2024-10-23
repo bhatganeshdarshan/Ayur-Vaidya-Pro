@@ -18,7 +18,7 @@ interface RouterTypes{
   handleClick : ()=> void ,
 }
 
-export function HomePage() {
+export default function HomePage() {
   const [darkMode, setDarkMode] = useState(false)
 
   const toggleDarkMode = () => {

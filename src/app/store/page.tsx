@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 
 const products = [
-  { id: 1, name: "Ashwagandha Capsules", price: 19.99, rating: 4.5, image: "/next.svg?height=200&width=200" },
+  { id: 1, name: "Ashwagandha Capsules", price: 19.99, rating: 4.5, image: "/Ashwagandha.webp?height=200&width=200" },
   { id: 2, name: "Triphala Powder", price: 14.99, rating: 4.2, image: "/next.svg?height=200&width=200" },
   { id: 3, name: "Brahmi Ghritam", price: 24.99, rating: 4.7, image: "/next.svg?height=200&width=200" },
   { id: 4, name: "Chyawanprash", price: 29.99, rating: 4.8, image: "/next.svg?height=200&width=200" },
