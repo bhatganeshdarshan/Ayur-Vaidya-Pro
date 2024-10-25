@@ -7,6 +7,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Separator } from "@/components/ui/separator"
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import themeTypes from '../../../theme-types'
+import { useTheme } from '../themeContext'
 
 const prescriptionData = {
   patientName: "Vishal",
@@ -35,12 +37,13 @@ const prescriptionData = {
 }
 
 export default function Prescription() {
-  const [darkMode, setDarkMode] = useState(false)
+  const {darkMode , toggleDarkMode} = useTheme();
+  // const [darkMode, setDarkMode] = useState(false)
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    document.documentElement.classList.toggle('dark')
-  }
+  // const toggleDarkMode = () => {
+  //   setDarkMode(!darkMode)
+  //   document.documentElement.classList.toggle('dark')
+  // }
 
   const handleDownload = () => {
     const element = document.getElementById('prescription-report')

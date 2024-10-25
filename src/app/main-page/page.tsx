@@ -6,14 +6,17 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Router } from 'next/router'
 import { useRouter } from 'next/navigation'
+import themeTypes from '../../../theme-types'
+import { useTheme } from '../themeContext'
 
 export default function MainPage() {
-  const [darkMode, setDarkMode] = useState(false)
+  const {darkMode , toggleDarkMode} = useTheme();
+  // const [darkMode, setDarkMode] = useState(false)
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    document.documentElement.classList.toggle('dark')
-  }
+  // const toggleDarkMode = () => {
+  //   setDarkMode(!darkMode)
+  //   document.documentElement.classList.toggle('dark')
+  // }
 
   const router = useRouter();
 

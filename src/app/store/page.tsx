@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { useCart } from "@/app/cart-context"
+import Link from 'next/link'
+import themeTypes from '../../../theme-types'
 
 const products = [
   { id: 1, name: "Ashwagandha Capsules", price: 19.99, rating: 4.5, image: "/Ashwagandha.webp?height=200&width=200" },
@@ -17,42 +20,18 @@ const products = [
 ]
 
 export default function Store() {
-  const [darkMode, setDarkMode] = useState(false)
+  // const [darkMode, setDarkMode] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
-  const [cart, setCart] = useState<{id: number, quantity: number}[]>([])
+  const { cart, addToCart, removeFromCart } = useCart()
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    document.documentElement.classList.toggle('dark')
-  }
+  // const toggleDarkMode = () => {
+  //   setDarkMode(!darkMode)
+  //   document.documentElement.classList.toggle('dark')
+  // }
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
-
-  const addToCart = (productId: number) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === productId)
-      if (existingItem) {
-        return prevCart.map(item =>
-          item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
-        )
-      }
-      return [...prevCart, { id: productId, quantity: 1 }]
-    })
-  }
-
-  const removeFromCart = (productId: number) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === productId)
-      if (existingItem && existingItem.quantity > 1) {
-        return prevCart.map(item =>
-          item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
-        )
-      }
-      return prevCart.filter(item => item.id !== productId)
-    })
-  }
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0)
 
@@ -71,12 +50,14 @@ export default function Store() {
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
-          <Button variant="outline" size="icon" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            {cartItemCount > 0 && (
-              <Badge className="absolute -top-2 -right-2 px-2 py-1 text-xs">{cartItemCount}</Badge>
-            )}
-          </Button>
+          <Link href="/cart">
+            <Button variant="outline" size="icon" className="relative">
+              <ShoppingCart className="h-5 w-5" />
+              {cartItemCount > 0 && (
+                <Badge className="absolute -top-2 -right-2 px-2 py-1 text-xs">{cartItemCount}</Badge>
+              )}
+            </Button>
+          </Link>
           <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>

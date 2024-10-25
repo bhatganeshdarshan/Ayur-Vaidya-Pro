@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Moon, Sun, Leaf, User, Calendar, Activity, Heart, AlertTriangle, Cigarette, Ruler, Weight } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Moon, Sun, Leaf, User, Calendar, Activity, Heart, AlertTriangle, Cigarette, Ruler, Weight, Mic, MicOff } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,35 +9,113 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-// import { NextRouter, useRouter } from 'next/router'
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { useRouter } from 'next/navigation'
+import { toast } from "@/hooks/use-toast"
+import themeTypes from '../../../theme-types'
+import { useTheme } from '../themeContext'
 
-interface RouterTypes{
-  router : AppRouterInstance , 
-  handleClick : ()=> void ,
+declare global {
+  interface Window {
+    googleTranslateElementInit: () => void;
+  }
+
+  namespace google {
+    namespace translate {
+      class TranslateElement {
+        constructor(options: object, elementId: string)
+      }
+    }
+  }
 }
 
 export default function HomePage() {
-  const [darkMode, setDarkMode] = useState(false)
+  const {darkMode , toggleDarkMode} = useTheme();
+  // const [darkMode, setDarkMode] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const [currentField, setCurrentField] = useState('')
+  const router = useRouter()
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    document.documentElement.classList.toggle('dark')
-  }
+  // const toggleDarkMode = () => {
+  //   setDarkMode(!darkMode)
+  //   document.documentElement.classList.toggle('dark')
+  // }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const userData = Object.fromEntries(formData.entries())
     console.log(userData)
+    router.push('/main-page')
   }
 
-  const router = useRouter();
+  const startListening = (fieldId: string) => {
+    setIsListening(true)
+    setCurrentField(fieldId)
 
-  const handleClick = () => {
-    router.push('/main-page');
-  };
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new (window as any).webkitSpeechRecognition()
+      recognition.continuous = false
+      recognition.interimResults = false
+
+      recognition.onstart = () => {
+        toast({
+          title: "Listening...",
+          description: "Speak now to input your data.",
+        })
+      }
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript
+        const field = document.getElementById(fieldId) as HTMLInputElement | HTMLTextAreaElement
+        if (field) {
+          field.value = transcript
+        }
+      }
+
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error)
+        setIsListening(false)
+      }
+
+      recognition.onend = () => {
+        setIsListening(false)
+      }
+
+      recognition.start()
+    } else {
+      toast({
+        title: "Speech Recognition Not Supported",
+        description: "Your browser doesn't support speech recognition.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const stopListening = () => {
+    setIsListening(false)
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new (window as any).webkitSpeechRecognition()
+      recognition.stop()
+    }
+  }
+
+  // useEffect(() => {
+  //   const addGoogleTranslate = () => {
+  //     const script = document.createElement('script')
+  //     script.src = `//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit`
+  //     document.body.appendChild(script)
+
+  //     window.googleTranslateElementInit = () => {
+  //       new window.google.translate.TranslateElement(
+  //         { pageLanguage: 'en', includedLanguages: 'hi,ta,te,kn,ml,gu,pa,bn,mr,ur' },
+  //         'google_translate_element'
+  //       )
+  //     }
+  //   }
+
+  //   addGoogleTranslate()
+  // }, [])
+
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50'}`}>
@@ -46,6 +124,7 @@ export default function HomePage() {
           <Leaf className="h-6 w-6 text-green-600 dark:text-green-400" />
           <h1 className="text-2xl font-bold">Ayur Vaidya Pro</h1>
         </div>
+        {/* <div id='google_translate_element'></div> */}
         <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
           {darkMode ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
         </Button>
@@ -66,14 +145,24 @@ export default function HomePage() {
                     <User className="h-4 w-4" />
                     <span>Name</span>
                   </Label>
-                  <Input id="name" name="name" required className="w-full" />
+                  <div className="flex items-center space-x-2">
+                    <Input id="name" name="name" required className="w-full" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('name')}>
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="age" className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4" />
                     <span>Age</span>
                   </Label>
-                  <Input id="age" name="age" type="number" required className="w-full" />
+                  <div className="flex items-center space-x-2">
+                    <Input id="age" name="age" type="number" required className="w-full" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('age')}>
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
               <div className="space-y-2">
@@ -125,14 +214,24 @@ export default function HomePage() {
                   <Heart className="h-4 w-4" />
                   <span>Medical History</span>
                 </Label>
-                <Textarea id="medicalHistory" name="medicalHistory" className="min-h-[100px]" />
+                <div className="flex items-center space-x-2">
+                  <Textarea id="medicalHistory" name="medicalHistory" className="min-h-[100px] w-full" />
+                  <Button type="button" size="icon" variant="outline" onClick={() => startListening('medicalHistory')}>
+                    <Mic className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="allergies" className="flex items-center space-x-2">
                   <AlertTriangle className="h-4 w-4" />
                   <span>Specific Allergies</span>
                 </Label>
-                <Input id="allergies" name="allergies" />
+                <div className="flex items-center space-x-2">
+                  <Input id="allergies" name="allergies" className="w-full" />
+                  <Button type="button" size="icon" variant="outline" onClick={() => startListening('allergies')}>
+                    <Mic className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label className="flex items-center space-x-2">
@@ -156,21 +255,39 @@ export default function HomePage() {
                     <Ruler className="h-4 w-4" />
                     <span>Height (cm)</span>
                   </Label>
-                  <Input id="height" name="height" type="number" required />
+                  <div className="flex items-center space-x-2">
+                    <Input id="height" name="height" type="number" required className="w-full" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('height')}>
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="weight" className="flex items-center space-x-2">
                     <Weight className="h-4 w-4" />
                     <span>Weight (kg)</span>
                   </Label>
-                  <Input id="weight" name="weight" type="number" required />
+                  <div className="flex items-center space-x-2">
+                    <Input id="weight" name="weight" type="number" required className="w-full" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('weight')}>
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <Button type="submit" className="w-full" onClick={handleClick} >Register</Button>
+              <Button type="submit" className="w-full">Register</Button>
             </form>
           </CardContent>
         </Card>
       </main>
+      {isListening && (
+        <div className="fixed bottom-4 right-4">
+          <Button variant="destructive" onClick={stopListening}>
+            <MicOff className="h-4 w-4 mr-2" />
+            Stop Listening
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
