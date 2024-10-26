@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Moon, Sun, Download, Printer } from 'lucide-react'
+import { Moon, Sun, Download, Printer, X } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -9,6 +9,8 @@ import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { useTheme } from '../themeContext'
 import { useUserContext } from '../UserContext'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { toast } from "@/hooks/use-toast";
 
 interface PrescriptionData {
   patientName: string;
@@ -18,10 +20,13 @@ interface PrescriptionData {
   predictedDisease: string;
   symptoms: string[];
   prescription: { name: string; dosage: string; frequency: string }[];
+  prescriptionPrices: { name: string; price: string }[];
   lifestyle: string[];
   followUp: string;
   diseaseExplanation: string;
 }
+
+
 
 function usePrescriptionData() {
   const [prescriptionData, setPrescriptionData] = useState<PrescriptionData | null>(null);
@@ -48,11 +53,6 @@ function usePrescriptionData() {
       const result = await response.json();
       console.log("Result from API:", result);
       
-      // if (!result || !result.choices || !result.choices[0] || !result.choices[0].message) {
-      //   throw new Error('Invalid response format from API');
-      // }
-
-      // const message = result.choices[0].message.content;
       const json_message = result;
       setPrescriptionData(json_message);
     } catch (error) {
@@ -66,10 +66,99 @@ function usePrescriptionData() {
   return { prescriptionData, isLoading, error, fetchPrescriptionData };
 }
 
+function MedicineOverlay({ isOpen, onClose, prescriptionData }: { isOpen: boolean; onClose: () => void; prescriptionData: PrescriptionData | null }) {
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isConfirmClose, setIsConfirmClose] = useState(false);
+
+  const totalPrice = prescriptionData?.prescriptionPrices?.reduce((sum, item) => {
+    const priceValue = parseInt(item.price.split(' ')[1] || '0', 10);
+    return sum + priceValue;
+  }, 0) || 0;
+
+  const handleClose = useCallback(() => {
+    if (isCheckoutOpen) {
+      setIsConfirmClose(true);
+    } else {
+      onClose();
+    }
+  }, [isCheckoutOpen, onClose]);
+
+  const handleConfirmClose = useCallback(() => {
+    setIsConfirmClose(false);
+    setIsCheckoutOpen(false);
+    onClose();
+  }, [onClose]);
+
+  const handleCheckout = useCallback(() => {
+    setTimeout(() => {
+      toast({
+        title: "Checkout Successful",
+        description: `Your order total of ₹ ${totalPrice} has been processed.`,
+      });
+      onClose();
+    }, 2000);
+  }, [totalPrice, onClose]);
+
+  if (!isOpen || !prescriptionData) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Buy Medicines</DialogTitle>
+        </DialogHeader>
+        {isCheckoutOpen ? (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Checkout</h3>
+            <p className="mb-4">Total Price: ₹ {totalPrice}</p>
+            <Button className="w-full" onClick={handleCheckout}>
+              Proceed to Payment
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <ul className="mb-4">
+              {prescriptionData.prescriptionPrices?.map((item, index) => (
+                <li key={index} className="flex justify-between mb-2">
+                  <span>{item.name || 'Unknown Medicine'}</span>
+                  <span>{item.price || '₹ 0'}</span>
+                </li>
+              )) || <li>No medicines found</li>}
+            </ul>
+            <Button className="w-full" onClick={() => setIsCheckoutOpen(true)}>
+              Checkout ( {totalPrice})
+            </Button>
+          </div>
+        )}
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+      {isConfirmClose && (
+        <Dialog open={isConfirmClose} onOpenChange={setIsConfirmClose}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Close</DialogTitle>
+            </DialogHeader>
+            <p>Are you sure you want to close? Your checkout progress will be lost.</p>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsConfirmClose(false)}>Cancel</Button>
+              <Button onClick={handleConfirmClose}>Confirm</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </Dialog>
+  );
+}
+
 export default function Prescription() {
   const { darkMode, toggleDarkMode } = useTheme();
   const { userData, jsonMessage } = useUserContext();
   const { prescriptionData, isLoading, error, fetchPrescriptionData } = usePrescriptionData();
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
   const handleFetchPrescription = useCallback(() => {
     if (userData && jsonMessage) {
@@ -123,6 +212,9 @@ export default function Prescription() {
               </Button>
               <Button variant="outline" size="icon" onClick={handlePrint}>
                 <Printer className="h-5 w-5" />
+              </Button>
+              <Button variant="outline" onClick={() => setIsOverlayOpen(true)}>
+                Buy Medicines
               </Button>
             </>
           )}
@@ -219,6 +311,13 @@ export default function Prescription() {
       <footer className="mt-12 p-4 bg-white dark:bg-gray-800 border-t text-center print:hidden">
         <p className="text-sm text-gray-600 dark:text-gray-400">© 2024 Ayur Vaidya Pro. All rights reserved.</p>
       </footer>
+      {prescriptionData && (
+        <MedicineOverlay
+          isOpen={isOverlayOpen}
+          onClose={() => setIsOverlayOpen(false)}
+          prescriptionData={prescriptionData}
+        />
+      )}
     </div>
   )
 }

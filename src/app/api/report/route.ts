@@ -54,6 +54,11 @@ export async function POST(req: Request) {
                 { "name": "", "dosage": "", "frequency": "" },
                 { "name": "", "dosage": "", "frequency": "" }
               ],
+              "prescriptionPrices": [
+                { "name": "", "price": "₹" },
+                { "name": "", "price": "₹" },
+                { "name": "", "price": "₹" }
+              ],
               "lifestyle": ["", "", "", ""],
               "followUp": ""
             }`
