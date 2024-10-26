@@ -35,18 +35,11 @@ const center = {
 };
 
 export default function NearBy() {
-  // const [darkMode, setDarkMode] = useState<boolean>(false);
   const {darkMode , toggleDarkMode} = useTheme();
   const [ayurvedicLocations, setAyurvedicLocations] = useState<Location[]>([]);
   const [yogaCenters, setYogaCenters] = useState<Location[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-
-  // const toggleDarkMode = (): void => {
-  //   setDarkMode(!darkMode);
-  //   document.documentElement.classList.toggle('dark');
-  // };
-
   const getNearbyPlaces = async (lat: number, lng: number, type: string): Promise<Location[] | undefined> => {
     try {
       const response = await axios.get('http://localhost:5000/api/places', {

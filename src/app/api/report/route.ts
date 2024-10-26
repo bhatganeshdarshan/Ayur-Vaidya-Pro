@@ -1,6 +1,18 @@
 import { NextResponse } from 'next/server';
 let lastRequestTime = 0;
 export async function POST(req: Request) {
+
+    const getCurrentDate = (): string => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(today.getDate()).padStart(2, '0');
+      
+        return `${year}-${month}-${day}`;
+      };
+      
+      const tdate = getCurrentDate();
+
     const now = Date.now();
     if (now - lastRequestTime < 3000) { 
       return NextResponse.json({ error: "Please wait before making another request." }, { status: 429 });
@@ -33,7 +45,7 @@ export async function POST(req: Request) {
               "patientName": "${patientName}",
               "age": ${age},
               "gender": "${gender}",
-              "date": "YYYY-MM-DD",
+              "date": "${tdate}",
               "predictedDisease": "${disease}",
               "diseaseExplanation": "",
               "symptoms": ["", "", "", ""],
