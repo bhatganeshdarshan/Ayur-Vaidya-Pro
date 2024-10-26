@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from "@/hooks/use-toast"
 import themeTypes from '../../../theme-types'
 import { useTheme } from '../themeContext'
+import { useUserContext } from '../UserContext'
 
 declare global {
   interface Window {
@@ -34,19 +35,45 @@ export default function HomePage() {
   const [isListening, setIsListening] = useState(false)
   const [currentField, setCurrentField] = useState('')
   const router = useRouter()
+  const { setUserData, setJsonMessage } = useUserContext();
 
   // const toggleDarkMode = () => {
   //   setDarkMode(!darkMode)
   //   document.documentElement.classList.toggle('dark')
   // }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const userData = Object.fromEntries(formData.entries())
-    console.log(userData)
-    router.push('/main-page')
-  }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    const formData = new FormData(event.currentTarget);
+    const userData = Object.fromEntries(formData.entries()); 
+    
+    try {
+      const response = await fetch('/api/arliai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patientData: userData }), 
+      });
+  
+      const result = await response.json();
+      const message = result.choices[0]['message'].content;
+      console.log("result : \n", result);
+
+      try {
+        const json_message = JSON.parse(message);
+        console.log("json message \n", json_message);
+        setUserData(userData);
+        setJsonMessage(json_message);
+      } catch (error) {
+        console.error("Couldn't parse JSON message");
+      }
+    } catch (error) {
+      console.error('Error submitting data', error);
+    }
+  
+    router.push('/main-page');
+  };
+  
 
   const startListening = (fieldId: string) => {
     setIsListening(true)

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/app/cart-context"
 import Link from 'next/link'
 import themeTypes from '../../../theme-types'
+import { useTheme } from '../themeContext'
 
 const products = [
   { id: 1, name: "Ashwagandha Capsules", price: 19.99, rating: 4.5, image: "/Ashwagandha.webp?height=200&width=200" },
@@ -21,6 +22,7 @@ const products = [
 
 export default function Store() {
   // const [darkMode, setDarkMode] = useState(false)
+  const {darkMode , toggleDarkMode} = useTheme();
   const [searchTerm, setSearchTerm] = useState("")
   const { cart, addToCart, removeFromCart } = useCart()
 

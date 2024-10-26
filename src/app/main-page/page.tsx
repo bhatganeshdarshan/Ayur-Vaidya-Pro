@@ -8,6 +8,7 @@ import { Router } from 'next/router'
 import { useRouter } from 'next/navigation'
 import themeTypes from '../../../theme-types'
 import { useTheme } from '../themeContext'
+import { useUserContext } from '../UserContext'
 
 export default function MainPage() {
   const {darkMode , toggleDarkMode} = useTheme();
@@ -19,6 +20,9 @@ export default function MainPage() {
   // }
 
   const router = useRouter();
+  const {userData , jsonMessage} = useUserContext();
+
+  console.log(JSON.stringify(jsonMessage,null,2));
 
   const options = [
     { title: 'Disease Prediction and Curing', icon: Stethoscope, description: 'Get personalized disease predictions and treatment plans' , path : '/prescription-report'},
