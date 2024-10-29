@@ -9,38 +9,76 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from 'next/navigation'
 import { toast } from "@/hooks/use-toast"
-import themeTypes from '../../../theme-types'
 import { useTheme } from '../themeContext'
 import { useUserContext } from '../UserContext'
 
-declare global {
-  interface Window {
-    googleTranslateElementInit: () => void;
-  }
-
-  namespace google {
-    namespace translate {
-      class TranslateElement {
-        constructor(options: object, elementId: string)
-      }
-    }
-  }
-}
-
 export default function HomePage() {
-  const {darkMode , toggleDarkMode} = useTheme();
-  // const [darkMode, setDarkMode] = useState(false)
+  const { darkMode, toggleDarkMode } = useTheme();
   const [isListening, setIsListening] = useState(false)
   const [currentField, setCurrentField] = useState('')
+  const [showMedicalHistory, setShowMedicalHistory] = useState(false)
   const router = useRouter()
   const { setUserData, setJsonMessage } = useUserContext();
 
-  // const toggleDarkMode = () => {
-  //   setDarkMode(!darkMode)
-  //   document.documentElement.classList.toggle('dark')
-  // }
+
+  const options = [
+    { value: "hypertension", label: "Hypertension" },
+    { value: "diabetes_mellitus", label: "Diabetes Mellitus (Type 1 and Type 2)" },
+    { value: "hyperlipidemia", label: "Hyperlipidemia (High Cholesterol)" },
+    { value: "obesity", label: "Obesity" },
+    { value: "asthma", label: "Asthma" },
+    { value: "copd", label: "Chronic Obstructive Pulmonary Disease (COPD)" },
+    { value: "heart_disease", label: "Heart Disease (Coronary Artery Disease)" },
+    { value: "depression", label: "Depression" },
+    { value: "anxiety_disorders", label: "Anxiety Disorders" },
+    { value: "osteoarthritis", label: "Osteoarthritis" },
+    { value: "chronic_kidney_disease", label: "Chronic Kidney Disease" },
+    { value: "stroke", label: "Stroke" },
+    { value: "gerd", label: "Gastroesophageal Reflux Disease (GERD)" },
+    { value: "sleep_apnea", label: "Sleep Apnea" },
+    { value: "rheumatoid_arthritis", label: "Rheumatoid Arthritis" },
+    { value: "thyroid_disorders", label: "Thyroid Disorders (Hypothyroidism/Hyperthyroidism)" },
+    { value: "anemia", label: "Anemia" },
+    { value: "peripheral_artery_disease", label: "Peripheral Artery Disease" },
+    { value: "fibromyalgia", label: "Fibromyalgia" },
+    { value: "multiple_sclerosis", label: "Multiple Sclerosis" },
+    { value: "parkinsons_disease", label: "Parkinson’s Disease" },
+    { value: "schizophrenia", label: "Schizophrenia" },
+    { value: "bipolar_disorder", label: "Bipolar Disorder" },
+    { value: "allergic_rhinitis", label: "Allergic Rhinitis" },
+    { value: "psoriasis", label: "Psoriasis" },
+    { value: "eczema", label: "Eczema (Atopic Dermatitis)" },
+    { value: "glaucoma", label: "Glaucoma" },
+    { value: "hearing_loss", label: "Hearing Loss" },
+    { value: "gallbladder_disease", label: "Gallbladder Disease" },
+    { value: "peptic_ulcer_disease", label: "Peptic Ulcer Disease" },
+    { value: "gout", label: "Gout" },
+    { value: "liver_disease", label: "Liver Disease (e.g., Hepatitis)" },
+    { value: "cancer", label: "Cancer (various types)" },
+    { value: "hiv_aids", label: "HIV/AIDS" },
+    { value: "tuberculosis", label: "Tuberculosis" },
+    { value: "urinary_incontinence", label: "Urinary Incontinence" },
+    { value: "ibd", label: "Inflammatory Bowel Disease (IBD)" },
+    { value: "chronic_pain_syndrome", label: "Chronic Pain Syndrome" },
+    { value: "ptsd", label: "Post-Traumatic Stress Disorder (PTSD)" },
+    { value: "alcohol_use_disorder", label: "Alcohol Use Disorder" },
+    { value: "substance_use_disorders", label: "Substance Use Disorders" },
+    { value: "eating_disorders", label: "Eating Disorders (e.g., Anorexia, Bulimia)" },
+    { value: "osteoporosis", label: "Osteoporosis" },
+    { value: "sickle_cell_disease", label: "Sickle Cell Disease" },
+    { value: "thromboembolic_disorders", label: "Thromboembolic Disorders (e.g., Deep Vein Thrombosis)" },
+    { value: "osteomyelitis", label: "Osteomyelitis" },
+    { value: "chronic_sinusitis", label: "Chronic Sinusitis" },
+    { value: "celiac_disease", label: "Celiac Disease" },
+    { value: "post_surgical_complications", label: "Post-Surgical Complications" },
+    { value: "endometriosis", label: "Endometriosis" },
+  ];
+  
+
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -73,7 +111,6 @@ export default function HomePage() {
   
     router.push('/main-page');
   };
-  
 
   const startListening = (fieldId: string) => {
     setIsListening(true)
@@ -126,24 +163,6 @@ export default function HomePage() {
     }
   }
 
-  // useEffect(() => {
-  //   const addGoogleTranslate = () => {
-  //     const script = document.createElement('script')
-  //     script.src = `//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit`
-  //     document.body.appendChild(script)
-
-  //     window.googleTranslateElementInit = () => {
-  //       new window.google.translate.TranslateElement(
-  //         { pageLanguage: 'en', includedLanguages: 'hi,ta,te,kn,ml,gu,pa,bn,mr,ur' },
-  //         'google_translate_element'
-  //       )
-  //     }
-  //   }
-
-  //   addGoogleTranslate()
-  // }, [])
-
-
   return (
     <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50'}`}>
       <header className="p-4 flex justify-between items-center border-b bg-white dark:bg-gray-800 shadow-sm">
@@ -151,7 +170,6 @@ export default function HomePage() {
           <Leaf className="h-6 w-6 text-green-600 dark:text-green-400" />
           <h1 className="text-2xl font-bold">Ayur Vaidya Pro</h1>
         </div>
-        {/* <div id='google_translate_element'></div> */}
         <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
           {darkMode ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
         </Button>
@@ -193,28 +211,27 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="flex items-center space-x-2">
+                <Label htmlFor="comorbidities" className="flex items-center space-x-2">
                   <Activity className="h-4 w-4" />
                   <span>Comorbidities</span>
                 </Label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="diabetes" name="comorbidities" value="diabetes" />
-                    <Label htmlFor="diabetes">Diabetes</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="bp" name="comorbidities" value="bp" />
-                    <Label htmlFor="bp">Blood Pressure</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="heart" name="comorbidities" value="heart" />
-                    <Label htmlFor="heart">Heart Disease</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="asthma" name="comorbidities" value="asthma" />
-                    <Label htmlFor="asthma">Asthma</Label>
-                  </div>
-                </div>
+                <Select name="comorbidities">
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select comorbidities" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="diabetes">Diabetes</SelectItem>
+                    <SelectItem value="bp">Blood Pressure</SelectItem>
+                    <SelectItem value="heart">Heart Disease</SelectItem>
+                    <SelectItem value="asthma">Asthma</SelectItem> */}
+                    {options.map((option) => (
+      <SelectItem key={option.value} value={option.value}>
+        {option.label}
+      </SelectItem>
+    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label className="flex items-center space-x-2">
@@ -237,17 +254,35 @@ export default function HomePage() {
                 </RadioGroup>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="medicalHistory" className="flex items-center space-x-2">
+                <Label className="flex items-center space-x-2">
                   <Heart className="h-4 w-4" />
-                  <span>Medical History</span>
+                  <span>Do you want to specify other problems?</span>
                 </Label>
-                <div className="flex items-center space-x-2">
-                  <Textarea id="medicalHistory" name="medicalHistory" className="min-h-[100px] w-full" />
-                  <Button type="button" size="icon" variant="outline" onClick={() => startListening('medicalHistory')}>
-                    <Mic className="h-4 w-4" />
-                  </Button>
-                </div>
+                <RadioGroup name="specifyProblems" className="flex space-x-4" onValueChange={(value) => setShowMedicalHistory(value === 'yes')}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="yes-problems" />
+                    <Label htmlFor="yes-problems">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="no-problems" />
+                    <Label htmlFor="no-problems">No</Label>
+                  </div>
+                </RadioGroup>
               </div>
+              {showMedicalHistory && (
+                <div className="space-y-2">
+                  <Label htmlFor="medicalHistory" className="flex items-center space-x-2">
+                    <Heart className="h-4 w-4" />
+                    <span>Medical History</span>
+                  </Label>
+                  <div className="flex items-center space-x-2">
+                    <Textarea id="medicalHistory" name="medicalHistory" className="min-h-[100px] w-full" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('medicalHistory')}>
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="allergies" className="flex items-center space-x-2">
                   <AlertTriangle className="h-4 w-4" />
