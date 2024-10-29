@@ -12,6 +12,9 @@ import { useTheme } from '../themeContext'
 import { Camera, Leaf, Moon, Sun, Upload } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Webcam from 'react-webcam'
+import { useUserContext } from '../UserContext'
+import Router from 'next/router'
+import { useRouter } from 'next/navigation'
 
 export default function UserParametersForm() {
 
@@ -36,10 +39,13 @@ export default function UserParametersForm() {
         sleepCycle: '',
         furtherQueries: ''
       })
-    
+      
+      const { setUserData, setJsonMessage } = useUserContext();
+      const {userData , jsonMessage } = useUserContext();
       const [animateSliders, setAnimateSliders] = useState(false)
       const [showWebcam, setShowWebcam] = useState(false)
       const webcamRef = useRef<Webcam>(null)
+      const router = useRouter();
     
       const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -54,14 +60,38 @@ export default function UserParametersForm() {
         setFormData(prev => ({ ...prev, [name]: value[0] }))
       }
     
-      const handleSubmit = (e: React.FormEvent) => {
+      const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         console.log(formData)
-        // Here you would typically send the data to your backend or perform further actions
+        setJsonMessage(formData);
+
+        try {
+            const response = await fetch('/api/arliai', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ patientData: userData , patientEntries : formData}), 
+            });
+        
+            const result = await response.json();
+            const message = result.choices[0]['message'].content;
+            console.log("result : \n", result);
+      
+            try {
+              const json_message = JSON.parse(message);
+              console.log("json message \n", json_message);
+              setUserData(userData);
+              setJsonMessage(json_message);
+            } catch (error) {
+              console.error("Couldn't parse JSON message");
+            }
+          } catch (error) {
+            console.error('Error submitting data', error);
+          }
+
+        router.push('/main-page');
       }
     
       const predictDoshas = () => {
-        // Dummy data for prediction
         const dummyPrediction = {
           vaata: Math.floor(Math.random() * 101),
           pitta: Math.floor(Math.random() * 101),

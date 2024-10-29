@@ -40,7 +40,7 @@ export async function POST(req: Request) {
           },
           {
             role: "user",
-            content: `Generate an Ayurvedic prescription for ${disease}. Include a one-line explanation of the disease and possible Ayurvedic medicines. Strict JSON format:
+            content: `Generate an Ayurvedic prescription for ${disease}. Include a one-line explanation of the disease and possible Ayurvedic medicines . Also make sure you give name of the Yoga and mudra in Sanskrit names . Strict JSON format:
             {
               "patientName": "${patientName}",
               "age": ${age},
@@ -60,7 +60,10 @@ export async function POST(req: Request) {
                 { "name": "", "price": "₹" }
               ],
               "lifestyle": ["", "", "", ""],
-              "followUp": ""
+              "followUp": "",
+              "recommended_yoga" : "",
+              "recommended_mudra : "",
+              "recommended_meditation : "",
             }`
           }
         ],
@@ -79,7 +82,7 @@ export async function POST(req: Request) {
     }
 
     const data = await response.json();
-
+    console.log(data);
     if (data.choices && data.choices.length > 0 && data.choices[0].message) {
       try {
         const prescriptionJson = typeof data.choices[0].message.content === "string" 

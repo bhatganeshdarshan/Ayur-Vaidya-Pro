@@ -14,6 +14,7 @@ export default function MainPage() {
   const { userData, jsonMessage } = useUserContext();
 
   console.log(JSON.stringify(jsonMessage, null, 2));
+  console.log(JSON.stringify(userData,null,2));
 
   const options = [
     { title: 'Disease Prediction and Curing', icon: Stethoscope, description: 'Get personalized disease predictions and treatment plans', path: '/prescription-report' },

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   if (req.method === 'POST') {
     try {
-      const patientData = await req.json();
+      const {patientData ,patientEntries} = await req.json();
       console.log(patientData);
 
       const response = await fetch("https://api.arliai.com/v1/chat/completions", {
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
                 `},
             {
               role: "user",
-              content: `Here is the patient data JSON: ${JSON.stringify(patientData)}`
+              content: `Here is the patient data JSON: ${JSON.stringify(patientData)} and ${JSON.stringify(patientEntries)}`
             }
           ],
           prompt: `

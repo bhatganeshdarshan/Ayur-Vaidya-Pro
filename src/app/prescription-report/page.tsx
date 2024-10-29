@@ -24,6 +24,9 @@ interface PrescriptionData {
   lifestyle: string[];
   followUp: string;
   diseaseExplanation: string;
+  recommended_yoga : string ;
+  recommended_mudra : string ;
+  recommended_meditation : string ;
 }
 
 

@@ -86,30 +86,31 @@ export default function HomePage() {
     const formData = new FormData(event.currentTarget);
     const userData = Object.fromEntries(formData.entries()); 
     
-    try {
-      const response = await fetch('/api/arliai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ patientData: userData }), 
-      });
+    // try {
+    //   const response = await fetch('/api/arliai', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ patientData: userData }), 
+    //   });
   
-      const result = await response.json();
-      const message = result.choices[0]['message'].content;
-      console.log("result : \n", result);
+    //   const result = await response.json();
+    //   const message = result.choices[0]['message'].content;
+    //   console.log("result : \n", result);
 
-      try {
-        const json_message = JSON.parse(message);
-        console.log("json message \n", json_message);
-        setUserData(userData);
-        setJsonMessage(json_message);
-      } catch (error) {
-        console.error("Couldn't parse JSON message");
-      }
-    } catch (error) {
-      console.error('Error submitting data', error);
-    }
+    //   try {
+    //     const json_message = JSON.parse(message);
+    //     console.log("json message \n", json_message);
+    //     setUserData(userData);
+    //     setJsonMessage(json_message);
+    //   } catch (error) {
+    //     console.error("Couldn't parse JSON message");
+    //   }
+    // } catch (error) {
+    //   console.error('Error submitting data', error);
+    // }
+    setUserData(userData);
   
-    router.push('/main-page');
+    router.push('/user-entry');
   };
 
   const startListening = (fieldId: string) => {
