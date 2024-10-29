@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import themeTypes from '../../../theme-types'
 import { useTheme } from '../themeContext'
+import Image from 'next/image'
 
 const features = [
   { icon: Leaf, title: "Ayurvedic Wisdom", description: "Access ancient healing knowledge" },
@@ -48,7 +49,9 @@ export default function Onboarding() {
         className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md"
       >
         <div className="flex items-center space-x-2">
-          <Leaf className="h-6 w-6 text-primary" />
+          {/* <Leaf className="h-6 w-6 text-primary" />
+           */}
+           <Image src="/app_logo.png" alt="" height={45} width={45}></Image>
           <h1 className="text-xl font-bold">Ayur Vaidya Pro</h1>
         </div>
         <Button variant="ghost" size="icon" onClick={toggleDarkMode}>

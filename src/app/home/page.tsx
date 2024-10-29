@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from "@/hooks/use-toast"
 import { useTheme } from '../themeContext'
 import { useUserContext } from '../UserContext'
+import Image from 'next/image'
 
 export default function HomePage() {
   const { darkMode, toggleDarkMode } = useTheme();
@@ -22,7 +23,6 @@ export default function HomePage() {
   const [showMedicalHistory, setShowMedicalHistory] = useState(false)
   const router = useRouter()
   const { setUserData, setJsonMessage } = useUserContext();
-
 
   const options = [
     { value: "hypertension", label: "Hypertension" },
@@ -45,7 +45,7 @@ export default function HomePage() {
     { value: "peripheral_artery_disease", label: "Peripheral Artery Disease" },
     { value: "fibromyalgia", label: "Fibromyalgia" },
     { value: "multiple_sclerosis", label: "Multiple Sclerosis" },
-    { value: "parkinsons_disease", label: "Parkinson’s Disease" },
+    { value: "parkinsons_disease", label: "Parkinson's Disease" },
     { value: "schizophrenia", label: "Schizophrenia" },
     { value: "bipolar_disorder", label: "Bipolar Disorder" },
     { value: "allergic_rhinitis", label: "Allergic Rhinitis" },
@@ -76,9 +76,6 @@ export default function HomePage() {
     { value: "post_surgical_complications", label: "Post-Surgical Complications" },
     { value: "endometriosis", label: "Endometriosis" },
   ];
-  
-
-
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -86,30 +83,7 @@ export default function HomePage() {
     const formData = new FormData(event.currentTarget);
     const userData = Object.fromEntries(formData.entries()); 
     
-    // try {
-    //   const response = await fetch('/api/arliai', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ patientData: userData }), 
-    //   });
-  
-    //   const result = await response.json();
-    //   const message = result.choices[0]['message'].content;
-    //   console.log("result : \n", result);
-
-    //   try {
-    //     const json_message = JSON.parse(message);
-    //     console.log("json message \n", json_message);
-    //     setUserData(userData);
-    //     setJsonMessage(json_message);
-    //   } catch (error) {
-    //     console.error("Couldn't parse JSON message");
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting data', error);
-    // }
     setUserData(userData);
-  
     router.push('/user-entry');
   };
 
@@ -165,21 +139,22 @@ export default function HomePage() {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50'}`}>
-      <header className="p-4 flex justify-between items-center border-b bg-white dark:bg-gray-800 shadow-sm">
+    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-gray-100' : 'bg-[#e6f3f3] text-gray-900'}`}>
+      <header className="p-4 flex justify-between items-center border-b bg-[#024950] shadow-lg">
         <div className="flex items-center space-x-2">
-          <Leaf className="h-6 w-6 text-green-600 dark:text-green-400" />
-          <h1 className="text-2xl font-bold">Ayur Vaidya Pro</h1>
+          <Image src="/app_logo.png" alt="Ayur Vaidya Pro Logo" height={95} width={65} className="drop-shadow-md" />
+          <h1 className="text-2xl font-bold text-white">Ayur Vaidya Pro</h1>
         </div>
-        <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-          {darkMode ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+        <Button variant="outline" size="icon" onClick={toggleDarkMode} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
+          {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          <span className="sr-only">Toggle theme</span>
         </Button>
       </header>
       <main className="container mx-auto mt-8 p-4">
-        <Card className="max-w-4xl mx-auto">
+        <Card className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center">Welcome to Ayur Vaidya Pro</CardTitle>
-            <CardDescription className="text-center text-lg">
+            <CardTitle className="text-3xl font-bold text-center text-[#024950] dark:text-white">Welcome to Ayur Vaidya Pro</CardTitle>
+            <CardDescription className="text-center text-lg text-gray-600 dark:text-gray-300">
               Please provide your details to get personalized medicine predictions
             </CardDescription>
           </CardHeader>
@@ -187,55 +162,50 @@ export default function HomePage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="flex items-center space-x-2">
+                  <Label htmlFor="name" className="flex items-center space-x-2 text-[#024950] dark:text-white">
                     <User className="h-4 w-4" />
                     <span>Name</span>
                   </Label>
                   <div className="flex items-center space-x-2">
-                    <Input id="name" name="name" required className="w-full" />
-                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('name')}>
+                    <Input id="name" name="name" required className="w-full border-[#024950] dark:border-gray-600" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('name')} className="border-[#024950] text-[#024950] hover:bg-[#024950] hover:text-white dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
                       <Mic className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="age" className="flex items-center space-x-2">
+                  <Label htmlFor="age" className="flex items-center space-x-2 text-[#024950] dark:text-white">
                     <Calendar className="h-4 w-4" />
                     <span>Age</span>
                   </Label>
                   <div className="flex items-center space-x-2">
-                    <Input id="age" name="age" type="number" required className="w-full" />
-                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('age')}>
+                    <Input id="age" name="age" type="number" required className="w-full border-[#024950] dark:border-gray-600" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('age')} className="border-[#024950] text-[#024950] hover:bg-[#024950] hover:text-white dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
                       <Mic className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="comorbidities" className="flex items-center space-x-2">
+                <Label htmlFor="comorbidities" className="flex items-center space-x-2 text-[#024950] dark:text-white">
                   <Activity className="h-4 w-4" />
                   <span>Comorbidities</span>
                 </Label>
                 <Select name="comorbidities">
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full border-[#024950] dark:border-gray-600">
                     <SelectValue placeholder="Select comorbidities" />
                   </SelectTrigger>
                   <SelectContent>
-                    {/* <SelectItem value="none">None</SelectItem>
-                    <SelectItem value="diabetes">Diabetes</SelectItem>
-                    <SelectItem value="bp">Blood Pressure</SelectItem>
-                    <SelectItem value="heart">Heart Disease</SelectItem>
-                    <SelectItem value="asthma">Asthma</SelectItem> */}
                     {options.map((option) => (
-      <SelectItem key={option.value} value={option.value}>
-        {option.label}
-      </SelectItem>
-    ))}
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="flex items-center space-x-2">
+                <Label className="flex items-center space-x-2 text-[#024950] dark:text-white">
                   <User className="h-4 w-4" />
                   <span>Gender</span>
                 </Label>
@@ -255,7 +225,7 @@ export default function HomePage() {
                 </RadioGroup>
               </div>
               <div className="space-y-2">
-                <Label className="flex items-center space-x-2">
+                <Label className="flex items-center space-x-2 text-[#024950] dark:text-white">
                   <Heart className="h-4 w-4" />
                   <span>Do you want to specify other problems?</span>
                 </Label>
@@ -272,34 +242,34 @@ export default function HomePage() {
               </div>
               {showMedicalHistory && (
                 <div className="space-y-2">
-                  <Label htmlFor="medicalHistory" className="flex items-center space-x-2">
+                  <Label htmlFor="medicalHistory" className="flex items-center space-x-2 text-[#024950] dark:text-white">
                     <Heart className="h-4 w-4" />
                     <span>Medical History</span>
                   </Label>
                   <div className="flex items-center space-x-2">
-                    <Textarea id="medicalHistory" name="medicalHistory" className="min-h-[100px] w-full" />
-                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('medicalHistory')}>
+                    <Textarea id="medicalHistory" name="medicalHistory" className="min-h-[100px] w-full border-[#024950] dark:border-gray-600" />
+                    <Button  type="button" size="icon" variant="outline" onClick={() => startListening('medicalHistory')} className="border-[#024950] text-[#024950] hover:bg-[#024950] hover:text-white dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
                       <Mic className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               )}
               <div className="space-y-2">
-                <Label htmlFor="allergies" className="flex items-center space-x-2">
+                <Label htmlFor="allergies" className="flex items-center space-x-2 text-[#024950] dark:text-white">
                   <AlertTriangle className="h-4 w-4" />
                   <span>Specific Allergies</span>
                 </Label>
                 <div className="flex items-center space-x-2">
-                  <Input id="allergies" name="allergies" className="w-full" />
-                  <Button type="button" size="icon" variant="outline" onClick={() => startListening('allergies')}>
+                  <Input id="allergies" name="allergies" className="w-full border-[#024950] dark:border-gray-600" />
+                  <Button type="button" size="icon" variant="outline" onClick={() => startListening('allergies')} className="border-[#024950] text-[#024950] hover:bg-[#024950] hover:text-white dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
                     <Mic className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="flex items-center space-x-2">
-                  <Cigarette className="h-4 w-4" />
-                  <span>Bad Habits</span>
+                <Label className="flex items-center space-x-2 text-[#024950] dark:text-white">
+                  <Cigarette className="h-6 w-6" />
+                  {/* <span>Bad Habits</span> */}
                 </Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="flex items-center space-x-2">
@@ -314,38 +284,38 @@ export default function HomePage() {
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="height" className="flex items-center space-x-2">
+                  <Label htmlFor="height" className="flex items-center space-x-2 text-[#024950] dark:text-white">
                     <Ruler className="h-4 w-4" />
                     <span>Height (cm)</span>
                   </Label>
                   <div className="flex items-center space-x-2">
-                    <Input id="height" name="height" type="number" required className="w-full" />
-                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('height')}>
+                    <Input id="height" name="height" type="number" required className="w-full border-[#024950] dark:border-gray-600" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('height')} className="border-[#024950] text-[#024950] hover:bg-[#024950] hover:text-white dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
                       <Mic className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="weight" className="flex items-center space-x-2">
+                  <Label htmlFor="weight" className="flex items-center space-x-2 text-[#024950] dark:text-white">
                     <Weight className="h-4 w-4" />
                     <span>Weight (kg)</span>
                   </Label>
                   <div className="flex items-center space-x-2">
-                    <Input id="weight" name="weight" type="number" required className="w-full" />
-                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('weight')}>
+                    <Input id="weight" name="weight" type="number" required className="w-full border-[#024950] dark:border-gray-600" />
+                    <Button type="button" size="icon" variant="outline" onClick={() => startListening('weight')} className="border-[#024950] text-[#024950] hover:bg-[#024950] hover:text-white dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
                       <Mic className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </div>
-              <Button type="submit" className="w-full">Register</Button>
+              <Button type="submit" className="w-full bg-[#024950] text-white hover:bg-[#036b74]">Register</Button>
             </form>
           </CardContent>
         </Card>
       </main>
       {isListening && (
         <div className="fixed bottom-4 right-4">
-          <Button variant="destructive" onClick={stopListening}>
+          <Button variant="destructive" onClick={stopListening} className="bg-red-600 hover:bg-red-700">
             <MicOff className="h-4 w-4 mr-2" />
             Stop Listening
           </Button>

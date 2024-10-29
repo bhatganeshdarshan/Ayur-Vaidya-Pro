@@ -28,8 +28,8 @@ export async function POST(req: Request) {
 
               {
                 "HealthIssue": "${healthIssue}",
-                "Summary": "A brief summary of the current medical report.",
-                "Comparison": "A comparison between the current and previous medical reports, highlighting changes or improvements.",
+                "Summary": "A brief summary of the current medical report in string format.",
+                "Comparison": "A comparison between the current and previous medical reports, highlighting changes or improvements . It should be in string format only just like summary , you should not generate it in an array ",
                 "PreventiveMeasures": [
                   "Measure 1",
                   "Measure 2",
