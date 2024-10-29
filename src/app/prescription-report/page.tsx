@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Moon, Sun, Download, Printer, X } from 'lucide-react'
+import { Moon, Sun, Download, Printer, UserCog } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -10,8 +10,9 @@ import html2canvas from 'html2canvas'
 import { useTheme } from '../themeContext'
 import { useUserContext } from '../UserContext'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast"
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 interface PrescriptionData {
   patientName: string;
@@ -25,12 +26,10 @@ interface PrescriptionData {
   lifestyle: string[];
   followUp: string;
   diseaseExplanation: string;
-  recommended_yoga : string ;
-  recommended_mudra : string ;
-  recommended_meditation : string ;
+  recommended_yoga: string;
+  recommended_mudra: string;
+  recommended_meditation: string;
 }
-
-
 
 function usePrescriptionData() {
   const [prescriptionData, setPrescriptionData] = useState<PrescriptionData | null>(null);
@@ -57,8 +56,7 @@ function usePrescriptionData() {
       const result = await response.json();
       console.log("Result from API:", result);
       
-      const json_message = result;
-      setPrescriptionData(json_message);
+      setPrescriptionData(result);
     } catch (error) {
       console.error("Error fetching prescription data:", error);
       setError(error instanceof Error ? error.message : "Failed to load prescription data. Please try again.");
@@ -107,15 +105,15 @@ function MedicineOverlay({ isOpen, onClose, prescriptionData }: { isOpen: boolea
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800">
         <DialogHeader>
-          <DialogTitle>Buy Medicines</DialogTitle>
+          <DialogTitle className="text-[#024950] dark:text-white">Buy Medicines</DialogTitle>
         </DialogHeader>
         {isCheckoutOpen ? (
           <div>
-            <h3 className="text-lg font-semibold mb-2">Checkout</h3>
-            <p className="mb-4">Total Price: ₹ {totalPrice}</p>
-            <Button className="w-full" onClick={handleCheckout}>
+            <h3 className="text-lg font-semibold mb-2 text-[#024950] dark:text-white">Checkout</h3>
+            <p className="mb-4 text-gray-700 dark:text-gray-300">Total Price: ₹ {totalPrice}</p>
+            <Button className="w-full bg-[#024950] text-white hover:bg-[#036b74]" onClick={handleCheckout}>
               Proceed to Payment
             </Button>
           </div>
@@ -123,33 +121,33 @@ function MedicineOverlay({ isOpen, onClose, prescriptionData }: { isOpen: boolea
           <div>
             <ul className="mb-4">
               {prescriptionData.prescriptionPrices?.map((item, index) => (
-                <li key={index} className="flex justify-between mb-2">
+                <li key={index} className="flex justify-between mb-2 text-gray-700 dark:text-gray-300">
                   <span>{item.name || 'Unknown Medicine'}</span>
                   <span>{item.price || '₹ 0'}</span>
                 </li>
-              )) || <li>No medicines found</li>}
+              )) || <li className="text-gray-700 dark:text-gray-300">No medicines found</li>}
             </ul>
-            <Button className="w-full" onClick={() => setIsCheckoutOpen(true)}>
-              Checkout ( {totalPrice})
+            <Button className="w-full bg-[#024950] text-white hover:bg-[#036b74]" onClick={() => setIsCheckoutOpen(true)}>
+              Checkout (₹ {totalPrice})
             </Button>
           </div>
         )}
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={handleClose} className="border-[#024950] text-[#024950] dark:border-gray-400 dark:text-gray-400">
             Close
           </Button>
         </DialogFooter>
       </DialogContent>
       {isConfirmClose && (
         <Dialog open={isConfirmClose} onOpenChange={setIsConfirmClose}>
-          <DialogContent>
+          <DialogContent className="bg-white dark:bg-gray-800">
             <DialogHeader>
-              <DialogTitle>Confirm Close</DialogTitle>
+              <DialogTitle className="text-[#024950] dark:text-white">Confirm Close</DialogTitle>
             </DialogHeader>
-            <p>Are you sure you want to close? Your checkout progress will be lost.</p>
+            <p className="text-gray-700 dark:text-gray-300">Are you sure you want to close? Your checkout progress will be lost.</p>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsConfirmClose(false)}>Cancel</Button>
-              <Button onClick={handleConfirmClose}>Confirm</Button>
+              <Button variant="outline" onClick={() => setIsConfirmClose(false)} className="border-[#024950] text-[#024950] dark:border-gray-400 dark:text-gray-400">Cancel</Button>
+              <Button onClick={handleConfirmClose} className="bg-[#024950] text-white hover:bg-[#036b74]">Confirm</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -201,33 +199,41 @@ export default function Prescription() {
   };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
-      <header className="p-4 flex justify-between items-center border-b bg-white dark:bg-gray-800 shadow-sm print:hidden">
-        <h1 className="text-2xl font-bold">Ayur Vaidya Pro</h1>
+    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900 text-gray-100' : 'bg-[#e6f3f3] text-gray-900'}`}>
+      <header className="p-4 flex justify-between items-center border-b bg-[#024950] shadow-lg print:hidden">
+        <div className="flex items-center space-x-2">
+          <Image src="/app_logo.png" alt="Ayur Vaidya Pro Logo" height={95} width={65} className="drop-shadow-md" />
+          <h1 className="text-2xl font-bold text-white drop-shadow-sm">Ayur Vaidya Pro</h1>
+        </div>
         <div className="flex items-center space-x-4">
           {!prescriptionData && !isLoading && (
-            <Button variant="outline" onClick={handleFetchPrescription}>
+            <Button variant="outline" onClick={handleFetchPrescription} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
               Generate Prescription
             </Button>
           )}
           {prescriptionData && (
             <>
-              <Button variant="outline" size="icon" onClick={handleDownload}>
-                <Download className="h-5 w-5" />
+              <Button variant="outline" size="icon" onClick={handleDownload} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
+                <Download className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="icon" onClick={handlePrint}>
-                <Printer className="h-5 w-5" />
+              <Button variant="outline" size="icon" onClick={handlePrint} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
+                <Printer className="h-4 w-4" />
               </Button>
-              <Button variant="outline" onClick={() => setIsOverlayOpen(true)}>
+              <Button variant="outline" onClick={() => setIsOverlayOpen(true)} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
                 Buy Medicines
               </Button>
-              <Button variant="outline" onClick={()=>router.push('/doctors')}>
+              <Button variant="outline" onClick={() => router.push('/doctors')} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
                 Book Appointment
               </Button>
             </>
           )}
-          <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+          <Button variant="outline" size="icon" onClick={() => router.push('/home')} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
+            <UserCog className="h-4 w-4" />
+            <span className="sr-only">User settings</span>
+          </Button>
+          <Button variant="outline" size="icon" onClick={toggleDarkMode} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <span className="sr-only">Toggle theme</span>
           </Button>
         </div>
       </header>
@@ -243,9 +249,9 @@ export default function Prescription() {
           </div>
         )}
         {prescriptionData && (
-          <Card id="prescription-report" className="max-w-4xl mx-auto">
+          <Card id="prescription-report" className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-bold">Ayurvedic Prescription Report</CardTitle>
+              <CardTitle className="text-3xl font-bold text-[#024950] dark:text-white">Ayurvedic Prescription Report</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
@@ -261,11 +267,11 @@ export default function Prescription() {
               </div>
               <Separator />
               <div>
-                <h2 className="text-xl font-semibold mb-2">Predicted Condition</h2>
+                <h2 className="text-xl font-semibold mb-2 text-[#024950] dark:text-white">Predicted Condition</h2>
                 <p>{prescriptionData.predictedDisease}</p>
               </div>
               <div>
-                <h2 className="text-xl font-semibold mb-2">Symptoms</h2>
+                <h2 className="text-xl font-semibold mb-2 text-[#024950] dark:text-white">Symptoms</h2>
                 <ul className="list-disc pl-5">
                   {prescriptionData.symptoms.map((symptom, index) => (
                     <li key={index}>{symptom}</li>
@@ -273,7 +279,7 @@ export default function Prescription() {
                 </ul>
               </div>
               <div>
-                <h2 className="text-xl font-semibold mb-2">Ayurvedic Prescription</h2>
+                <h2 className="text-xl font-semibold mb-2 text-[#024950] dark:text-white">Ayurvedic Prescription</h2>
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
@@ -294,7 +300,7 @@ export default function Prescription() {
                 </table>
               </div>
               <div>
-                <h2 className="text-xl font-semibold mb-2">Lifestyle Recommendations</h2>
+                <h2 className="text-xl font-semibold mb-2 text-[#024950] dark:text-white">Lifestyle Recommendations</h2>
                 <ul className="list-disc pl-5">
                   {prescriptionData.lifestyle.map((item, index) => (
                     <li key={index}>{item}</li>
@@ -302,22 +308,33 @@ export default function Prescription() {
                 </ul>
               </div>
               <div>
+                <h2 className="text-xl font-semibold mb-2 text-[#024950] dark:text-white">Recommended Practices</h2>
+                
+                <p><strong>Yoga:</strong> {prescriptionData.recommended_yoga}</p>
+                <p><strong>Mudra:</strong> {prescriptionData.recommended_mudra}</p>
+                <p><strong>Meditation:</strong> {prescriptionData.recommended_meditation}</p>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold mb-2 text-[#024950] dark:text-white">Disease Explanation</h2>
+                <p>{prescriptionData.diseaseExplanation}</p>
+              </div>
+              <div>
                 <p><strong>Follow-up:</strong> {prescriptionData.followUp}</p>
               </div>
             </CardContent>
-            <CardFooter className="text-center text-sm text-gray-500">
+            <CardFooter className="text-center text-sm text-gray-500 dark:text-gray-400">
               This is an AI-generated prescription based on the symptoms provided. Please consult with a qualified Ayurvedic practitioner before starting any treatment.
             </CardFooter>
           </Card>
         )}
         {!prescriptionData && !isLoading && !error && (
           <div className="flex justify-center items-center h-64">
-            <Button onClick={handleFetchPrescription}>Generate Prescription</Button>
+            <Button onClick={handleFetchPrescription} className="bg-[#024950] text-white hover:bg-[#036b74]">Generate Prescription</Button>
           </div>
         )}
       </main>
-      <footer className="mt-12 p-4 bg-white dark:bg-gray-800 border-t text-center print:hidden">
-        <p className="text-sm text-gray-600 dark:text-gray-400">© 2024 Ayur Vaidya Pro. All rights reserved.</p>
+      <footer className="mt-12 p-4 bg-[#024950] text-center text-white print:hidden">
+        <p className="text-sm">© 2024 Ayur Vaidya Pro. All rights reserved.</p>
       </footer>
       {prescriptionData && (
         <MedicineOverlay
