@@ -18,10 +18,10 @@ export default function MainPage() {
 
   const options = [
     { title: 'Disease Prediction and Curing', icon: Stethoscope, description: 'Get personalized disease predictions and treatment plans', path: '/prescription-report' },
-    { title: 'Prevention', icon: Shield, description: 'Learn preventive measures for various health conditions', path: '/' },
+    { title: 'Prevention', icon: Shield, description: 'Learn preventive measures for various health conditions', path: '/prevention' },
     { title: 'Allopathy Complementary', icon: Pill, description: 'Explore complementary Ayurvedic treatments', path: '/locate-nearby' },
     { title: 'Overall Health and Well-being', icon: Heart, description: 'Achieve balance in body, mind, and spirit', path: '/' },
-    { title: 'Yoga and Meditation', icon: Flower2, description: 'Discover ancient practices for health and wellness', path: '/' },
+    { title: 'Yoga and Meditation', icon: Flower2, description: 'Discover ancient practices for health and wellness', path: '/yoga-embed' },
     { title: 'Allopathy Side Effects', icon: AlertCircle, description: 'Understand and manage side effects of allopathic medicines', path: '/' },
   ]
 
