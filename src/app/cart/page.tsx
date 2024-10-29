@@ -10,12 +10,22 @@ import themeTypes from '../../../theme-types'
 import { useTheme } from '../themeContext'
 
 const products = [
-  { id: 1, name: "Ashwagandha Capsules", price: 19.99, image: "/Ashwagandha.webp?height=100&width=100" },
-  { id: 2, name: "Triphala Powder", price: 14.99, image: "/next.svg?height=100&width=100" },
-  { id: 3, name: "Brahmi Ghritam", price: 24.99, image: "/next.svg?height=100&width=100" },
-  { id: 4, name: "Chyawanprash", price: 29.99, image: "/next.svg?height=100&width=100" },
-  { id: 5, name: "Neem Tablets", price: 12.99, image: "/next.svg?height=100&width=100" },
-  { id: 6, name: "Tulsi Drops", price: 9.99, image: "/next.svg?height=100&width=100" },
+  { id: 1, name: "Navaratna Mala", price: 999.00, rating: 4.5, image: "/navaratna.jpeg?height=200&width=200" },
+  { id: 2, name: "Herbal Face Pack", price: 750.00, rating: 4.2, image: "/facep.jpeg?height=200&width=200" },
+  { id: 3, name: "Navaratna", price: 1200.00, rating: 4.9, image: "/navaratna.jpeg?height=200&width=200" },
+  { id: 4, name: "Japamala", price: 499.00, rating: 4.6, image: "/japamala.jpeg?height=200&width=200" },
+  { id: 5, name: "Oil Pot", price: 549.00, rating: 4.3, image: "/oil_pot.jpeg?height=200&width=200" },
+  { id: 6, name: "Ashwagandha Root", price: 199.00, rating: 4.6, image: "/ashwagandha_root.jpeg?height=200&width=200" },
+  { id: 7, name: "Panchagavya Ghee Jar", price: 649.00, rating: 4.5, image: "/panchagavya_ghee_jar.jpeg?height=200&width=200" },
+  { id: 8, name: "Parad Shivling", price: 1500.00, rating: 4.8, image: "/parad_shivling.jpeg?height=200&width=200" },
+  { id: 9, name: "Ayurvedic Copper Water Bottle", price: 899.00, rating: 4.4, image: "/ayurvedic_copper_water_bottle.jpeg?height=200&width=200" },
+  { id: 10, name: "Bhasma Vessel", price: 299.00, rating: 4.1, image: "/bhasma_vessel.jpeg?height=200&width=200" },
+  { id: 11, name: "Complementary", price: 149.00, rating: 4.0, image: "/complementary.jpeg?height=200&width=200" },
+  { id: 12, name: "Rudrakshi Mala", price: 1299.00, rating: 4.7, image: "/rudrakshi_mala.jpeg?height=200&width=200" },
+  { id: 13, name: "Cow Dung Ash", price: 99.00, rating: 4.1, image: "/cow_dung_ash.jpeg?height=200&width=200" },
+  { id: 14, name: "Shiva Statue", price: 349.00, rating: 4.5, image: "/shiva_statue.jpeg?height=200&width=200" },
+  { id: 15, name: "Vaidya Danda", price: 749.00, rating: 4.3, image: "/vaidya_danda.jpeg?height=200&width=200" },
+  { id: 16, name: "Yajna Spoon", price: 59.00, rating: 4.0, image: "/yajna_spoon.jpeg?height=200&width=200" },
 ]
 
 export default function CartPage() {

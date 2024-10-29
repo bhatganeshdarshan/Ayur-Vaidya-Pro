@@ -11,6 +11,7 @@ import { useTheme } from '../themeContext'
 import { useUserContext } from '../UserContext'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from 'next/navigation'
 
 interface PrescriptionData {
   patientName: string;
@@ -162,6 +163,7 @@ export default function Prescription() {
   const { userData, jsonMessage } = useUserContext();
   const { prescriptionData, isLoading, error, fetchPrescriptionData } = usePrescriptionData();
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const router = useRouter();
 
   const handleFetchPrescription = useCallback(() => {
     if (userData && jsonMessage) {
@@ -218,6 +220,9 @@ export default function Prescription() {
               </Button>
               <Button variant="outline" onClick={() => setIsOverlayOpen(true)}>
                 Buy Medicines
+              </Button>
+              <Button variant="outline" onClick={()=>router.push('/doctors')}>
+                Book Appointment
               </Button>
             </>
           )}

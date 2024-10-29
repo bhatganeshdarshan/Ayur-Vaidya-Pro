@@ -43,7 +43,8 @@ export default function UserParametersForm() {
   const [showWebcam, setShowWebcam] = useState(false)
   const webcamRef = useRef<Webcam>(null)
   const router = useRouter();
-
+  console.log(userData);
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -61,7 +62,7 @@ export default function UserParametersForm() {
     e.preventDefault()
     console.log(formData)
     setJsonMessage(formData);
-
+    
     try {
       const response = await fetch('/api/arliai', {
         method: 'POST',
@@ -139,7 +140,7 @@ export default function UserParametersForm() {
       <main className="container mx-auto mt-8 p-4">
         <Card className="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-[#024950] dark:text-white">User Parameters</CardTitle>
+            <CardTitle className="text-2xl font-bold text-[#024950] dark:text-white">Hello , {userData?userData['name']:''}</CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-300">Please enter the following details</CardDescription>
           </CardHeader>
           <CardContent>

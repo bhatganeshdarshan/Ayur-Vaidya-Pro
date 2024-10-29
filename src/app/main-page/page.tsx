@@ -33,6 +33,9 @@ export default function MainPage() {
           <h1 className="text-2xl font-bold text-white drop-shadow-sm">Ayur Vaidya Pro</h1>
         </div>
         <div className="flex items-center space-x-4">
+        <Button variant="outline" onClick={()=>router.push('/doctors')}>
+                Book Appointment
+          </Button>
           <Button variant="outline" size="icon" onClick={() => router.push('/home')} className="bg-white/20 hover:bg-white/30 text-white border-white/50">
             <UserCog className="h-4 w-4" />
             <span className="sr-only">User settings</span>
