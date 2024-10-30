@@ -1,16 +1,25 @@
 'use client'
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, Instagram, Phone, MapPin, Mail, Twitter, Leaf, Sun, Moon, Wind } from "lucide-react"
+import { ArrowRight, Instagram, Phone, MapPin, Mail, Twitter, Leaf, Sun, Moon, Wind, X } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 
-export default function AyurVaidyaProLanding() {
+function AyurVaidyaProLanding() {
   const router = useRouter()
+  const [showWish, setShowWish] = useState(false)
+
+  useEffect(() => {
+    const today = new Date()
+    if (today.getDate() === 29 && today.getMonth() === 9) { // October is month 9 (0-indexed)
+      setShowWish(true)
+    }
+  }, [])
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -28,8 +37,37 @@ export default function AyurVaidyaProLanding() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F1F8E9]">
+      <AnimatePresence>
+        {showWish && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="bg-[#33691E] text-white py-4 px-6 flex justify-between items-center"
+          >
+            <div>
+              <h3 className="font-bold text-lg">Happy World Ayurvedic Day!</h3>
+              <p>Today, we celebrate the ancient wisdom of Ayurveda. Explore our special offers and learn more about holistic health.</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => router.push('/ayurveda-day-special')}
+                className="text-white border-white hover:bg-white hover:text-[#33691E]"
+              >
+                Learn More
+              </Button>
+              <button onClick={() => setShowWish(false)} className="text-white hover:text-gray-200">
+                <X size={24} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.header 
-        className="bg-[#A5D6A7] text-[#1B5E20] py-4 px-6 sticky top-0 z-10"
+        className="bg-[#60a863] text-[#1B5E20] py-4 px-6 sticky top-0 z-10 shadow-lg"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 15 }}
@@ -55,7 +93,6 @@ export default function AyurVaidyaProLanding() {
           </motion.ul>
         </nav>
       </motion.header>
-
       <main>
         <section className="bg-[#A5D6A7] text-[#1B5E20] py-20">
           <div className="container mx-auto flex flex-col md:flex-row items-center">
@@ -91,8 +128,7 @@ export default function AyurVaidyaProLanding() {
               <Card className="overflow-hidden rounded-2xl shadow-2xl">
                 <CardContent className="p-0">
                   <video 
-                    src="/ayur1.mp4" 
-                    // alt="Ayurvedic Wellness" 
+                    src="/ayur1.mp4"
                     className="w-full h-auto object-cover"
                     style={{maxHeight:'450px',maxWidth:'550px'}}
                     loop
@@ -104,6 +140,7 @@ export default function AyurVaidyaProLanding() {
             </motion.div>
           </div>
         </section>
+
 
         <section id="services" className="py-20 bg-[#E8F5E9]">
           <div className="container mx-auto">
@@ -306,4 +343,9 @@ export default function AyurVaidyaProLanding() {
       </footer>
     </div>
   )
+}
+
+
+export default function AyurVaidyaProLandingWrapper() {
+  return (<AyurVaidyaProLanding />);
 }

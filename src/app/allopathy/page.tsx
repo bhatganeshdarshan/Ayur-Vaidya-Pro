@@ -12,10 +12,26 @@ import { useTheme } from '../themeContext'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
+interface AllopathicComplement {
+  Summary: string;
+  Ayurvedic_Cure: {
+    exists: boolean;
+    cure: string;
+    frequency: string;
+    synergistic_effect: boolean;
+    potential_benefit: string;
+    adverse_effect: string;
+  };
+  Preventive_Measures: {
+    actions: string[];
+    limitations: string;
+  };
+}
+
 export default function AllopathicComplementPage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [pdfText, setPdfText] = useState("")
-  const [complement, setComplement] = useState<string | null>(null)
+  const [complement, setComplement] = useState<AllopathicComplement | null>(null)
   const { toast } = useToast()
   const { darkMode, toggleDarkMode } = useTheme()
   const router = useRouter()
@@ -56,7 +72,7 @@ export default function AllopathicComplementPage() {
     }
 
     try {
-      const response = await fetch('/api/allopathic-complement', {
+      const response = await fetch('/api/allopathy-complement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pdfText }),
@@ -67,7 +83,8 @@ export default function AllopathicComplementPage() {
       }
 
       const result = await response.json()
-      setComplement(result.complement)
+      const parsedComplement = JSON.parse(result.preventiveMeasures)
+      setComplement(parsedComplement)
     } catch (error) {
       console.error("Error fetching allopathic complement:", error)
       toast({
@@ -148,8 +165,42 @@ export default function AllopathicComplementPage() {
           </CardHeader>
           <CardContent>
             {complement ? (
-              <div className="prose text-gray-700 dark:text-gray-200">
-                <p>{complement}</p>
+              <div className="space-y-6 text-gray-700 dark:text-gray-200">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Summary</h3>
+                  <p>{complement.Summary || "No summary available."}</p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Ayurvedic Cure</h3>
+                  {complement.Ayurvedic_Cure.exists ? (
+                    <div>
+                      <p><strong>Cure:</strong> {complement.Ayurvedic_Cure.cure || "No specific cure mentioned."}</p>
+                      <p><strong>Frequency:</strong> {complement.Ayurvedic_Cure.frequency || "Frequency not specified."}</p>
+                      <p><strong>Synergistic Effect:</strong> {complement.Ayurvedic_Cure.synergistic_effect ? 'Yes' : 'No'}</p>
+                      <p><strong>Potential Benefit:</strong> {complement.Ayurvedic_Cure.potential_benefit || "No specific benefits mentioned."}</p>
+                    </div>
+                  ) : (
+                    <p><strong>Adverse Effect:</strong> {complement.Ayurvedic_Cure.adverse_effect || "There are no known adverse effects."}</p>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Preventive Measures</h3>
+                  {complement.Preventive_Measures.actions.length > 0 ? (
+                    <ul className="list-disc pl-5">
+                      {complement.Preventive_Measures.actions.map((action, index) => (
+                        <li key={index}>{action}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No specific preventive measures provided.</p>
+                  )}
+                  {complement.Preventive_Measures.limitations && (
+                    <p className="mt-2"><strong>Limitations:</strong> {complement.Preventive_Measures.limitations}</p>
+                  )}
+                  {!complement.Preventive_Measures.limitations && (
+                    <p className="mt-2"><strong>Limitations:</strong> No specific limitations mentioned.</p>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="flex items-center justify-center h-32 bg-gray-100 dark:bg-gray-700 rounded-md">

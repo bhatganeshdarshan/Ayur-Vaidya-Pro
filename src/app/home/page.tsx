@@ -269,7 +269,7 @@ export default function HomePage() {
               <div className="space-y-2">
                 <Label className="flex items-center space-x-2 text-[#024950] dark:text-white">
                   <Cigarette className="h-6 w-6" />
-                  {/* <span>Bad Habits</span> */}
+                  <span>Lifestyle Habits</span>
                 </Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="flex items-center space-x-2">
@@ -279,6 +279,10 @@ export default function HomePage() {
                   <div className="flex items-center space-x-2">
                     <Checkbox id="drink" name="badHabits" value="drink" />
                     <Label htmlFor="drink">Drink</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="drugs" name="badHabits" value="drugs" />
+                    <Label htmlFor="drink">Drugs</Label>
                   </div>
                 </div>
               </div>

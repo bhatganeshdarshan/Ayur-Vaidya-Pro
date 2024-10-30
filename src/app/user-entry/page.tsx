@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { useTheme } from '../themeContext'
-import { Camera, Leaf, Moon, Sun, Upload } from 'lucide-react'
+import { Camera, Leaf, Moon, Sun, Upload, Plus, Minus, Loader } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Webcam from 'react-webcam'
 import { useUserContext } from '../UserContext'
@@ -19,12 +19,8 @@ import Image from 'next/image'
 export default function UserParametersForm() {
   const { darkMode, toggleDarkMode } = useTheme();
   const [formData, setFormData] = useState({
-    symptom1: '',
-    symptom2: '',
-    symptom3: '',
-    symptom4: '',
-    cause1: '',
-    cause2: '',
+    symptoms: [''],
+    causes: [''],
     tonguePic: '',
     tongueColour: '',
     tongueNature: '',
@@ -41,13 +37,39 @@ export default function UserParametersForm() {
   const { setUserData, setJsonMessage, userData, jsonMessage } = useUserContext();
   const [animateSliders, setAnimateSliders] = useState(false)
   const [showWebcam, setShowWebcam] = useState(false)
+  const [isLoadingDoshas, setIsLoadingDoshas] = useState(false)
   const webcamRef = useRef<Webcam>(null)
   const router = useRouter();
-  console.log(userData);
   
+  useEffect(() => {
+    const storedDoshas = localStorage.getItem('doshas')
+    if (storedDoshas) {
+      const { vaata, pitta, kapha } = JSON.parse(storedDoshas)
+      setFormData(prev => ({ ...prev, vaata, pitta, kapha }))
+      setAnimateSliders(true)
+    }
+  }, [])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleArrayInputChange = (index: number, field: 'symptoms' | 'causes') => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newArray = [...formData[field]]
+    newArray[index] = e.target.value
+    setFormData(prev => ({ ...prev, [field]: newArray }))
+  }
+
+  const addArrayField = (field: 'symptoms' | 'causes') => () => {
+    setFormData(prev => ({ ...prev, [field]: [...prev[field], ''] }))
+  }
+
+  const removeArrayField = (field: 'symptoms' | 'causes', index: number) => () => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index)
+    }))
   }
 
   const handleSelectChange = (name: string) => (value: string) => {
@@ -90,20 +112,25 @@ export default function UserParametersForm() {
   }
 
   const predictDoshas = () => {
-    const dummyPrediction = {
-      vaata: Math.floor(Math.random() * 101),
-      pitta: Math.floor(Math.random() * 101),
-      kapha: Math.floor(Math.random() * 101),
-    }
+    setIsLoadingDoshas(true)
+    setTimeout(() => {
+      const dummyPrediction = {
+        vaata: Math.floor(Math.random() * 101),
+        pitta: Math.floor(Math.random() * 101),
+        kapha: Math.floor(Math.random() * 101),
+      }
 
-    setFormData(prev => ({
-      ...prev,
-      vaata: dummyPrediction.vaata,
-      pitta: dummyPrediction.pitta,
-      kapha: dummyPrediction.kapha,
-    }))
+      setFormData(prev => ({
+        ...prev,
+        vaata: dummyPrediction.vaata,
+        pitta: dummyPrediction.pitta,
+        kapha: dummyPrediction.kapha,
+      }))
 
-    setAnimateSliders(true)
+      localStorage.setItem('doshas', JSON.stringify(dummyPrediction))
+      setAnimateSliders(true)
+      setIsLoadingDoshas(false)
+    }, 7000)
   }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,39 +167,53 @@ export default function UserParametersForm() {
       <main className="container mx-auto mt-8 p-4">
         <Card className="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-[#024950] dark:text-white">Hello , {userData?userData['name']:''}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-[#024950] dark:text-white">Hello, {userData ? userData['name'] : ''}</CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-300">Please enter the following details</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {['symptom1', 'symptom2', 'symptom3', 'symptom4'].map((symptom, index) => (
-                  <div key={symptom} className="space-y-2">
-                    <Label htmlFor={symptom} className="text-[#024950] dark:text-white">Symptom {index + 1}</Label>
+              <div className="space-y-4">
+                <Label className="text-[#024950] dark:text-white">Symptoms</Label>
+                {formData.symptoms.map((symptom, index) => (
+                  <div key={`symptom-${index}`} className="flex items-center space-x-2">
                     <Input
-                      id={symptom}
-                      name={symptom}
-                      value={formData[symptom as keyof typeof formData]}
-                      onChange={handleInputChange}
+                      value={symptom}
+                      onChange={handleArrayInputChange(index, 'symptoms')}
                       required
                       className="border-[#024950] dark:border-gray-600"
                     />
+                    {index === formData.symptoms.length - 1 ? (
+                      <Button type="button" onClick={addArrayField('symptoms')} variant="outline" size="icon">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button type="button" onClick={removeArrayField('symptoms', index)} variant="outline" size="icon">
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {['cause1', 'cause2'].map((cause, index) => (
-                  <div key={cause} className="space-y-2">
-                    <Label htmlFor={cause} className="text-[#024950] dark:text-white">Cause {index + 1}</Label>
+              <div className="space-y-4">
+                <Label className="text-[#024950] dark:text-white">Causes</Label>
+                {formData.causes.map((cause, index) => (
+                  <div key={`cause-${index}`} className="flex items-center space-x-2">
                     <Input
-                      id={cause}
-                      name={cause}
-                      value={formData[cause as keyof typeof formData]}
-                      onChange={handleInputChange}
+                      value={cause}
+                      onChange={handleArrayInputChange(index, 'causes')}
                       required
                       className="border-[#024950] dark:border-gray-600"
                     />
+                    {index === formData.causes.length - 1 ? (
+                      <Button type="button" onClick={addArrayField('causes')} variant="outline" size="icon">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button type="button" onClick={removeArrayField('causes', index)} variant="outline" size="icon">
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -261,13 +302,29 @@ export default function UserParametersForm() {
                 </div>
               </div>
 
-              <Button type="button" onClick={predictDoshas} className="w-full bg-[#024950] text-white hover:bg-[#036b74]">
-                Predict Vata, Pitta, Kapha
+              <Button 
+                type="button" 
+                onClick={predictDoshas} 
+                className="w-full bg-[#024950] text-white hover:bg-[#036b74]"
+                disabled={isLoadingDoshas}
+              >
+                {isLoadingDoshas ? (
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    Predicting Doshas...
+                  </>
+                ) : (
+                  'Predict Vata, Pitta, Kapha'
+                )}
               </Button>
 
               {['vaata', 'pitta', 'kapha'].map((dosha) => (
                 <div key={dosha} className="space-y-2">
-                  <Label htmlFor={dosha} className="text-[#024950] dark:text-white">{dosha.charAt(0).toUpperCase() + dosha.slice(1)}</Label>
+                  <Label htmlFor={dosha} 
+                    className="text-[#024950] dark:text-white"
+                  >
+                    {dosha.charAt(0).toUpperCase() + dosha.slice(1)}
+                  </Label>
                   <div className="relative pt-1">
                     <Slider
                       id={dosha}
@@ -308,8 +365,6 @@ export default function UserParametersForm() {
                   </SelectContent>
                 </Select>
               </div>
-
-              
 
               {['foodCycle', 'waterCycle', 'sleepCycle'].map((cycle) => (
                 <div key={cycle} className="space-y-2">

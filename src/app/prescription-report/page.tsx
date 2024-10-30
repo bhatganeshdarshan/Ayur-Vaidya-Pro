@@ -250,9 +250,18 @@ export default function Prescription() {
         )}
         {prescriptionData && (
           <Card id="prescription-report" className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-bold text-[#024950] dark:text-white">Ayurvedic Prescription Report</CardTitle>
-            </CardHeader>
+ <CardHeader className="flex flex-row items-center justify-center space-x-4 px-6 py-4">
+        <Image
+          src="/app_logo.png"
+          alt="Ayur Vaidya Pro Logo"
+          width={80}
+          height={80}
+          className="w-20 h-20 object-contain"
+        />
+        <CardTitle className="text-2xl md:text-3xl font-bold text-[#024950] dark:text-white">
+          Ayur Vaidya Pro Expert Report
+        </CardTitle>
+      </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
