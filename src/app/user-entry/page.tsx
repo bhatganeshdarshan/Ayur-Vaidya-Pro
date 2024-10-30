@@ -368,7 +368,7 @@ export default function UserParametersForm() {
 
               {['foodCycle', 'waterCycle', 'sleepCycle'].map((cycle) => (
                 <div key={cycle} className="space-y-2">
-                  <Label htmlFor={cycle} className="text-[#024950] dark:text-white">{cycle.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())} (hours)</Label>
+                  <Label htmlFor={cycle} className="text-[#024950] dark:text-white">{cycle.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())} </Label>
                   <Input
                     id={cycle}
                     name={cycle}

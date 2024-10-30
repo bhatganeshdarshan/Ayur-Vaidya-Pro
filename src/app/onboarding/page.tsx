@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ArrowRight, Instagram, Phone, MapPin, Mail, Twitter, Leaf, Sun, Moon, Wind, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-
+import Image from "next/image"
 function AyurVaidyaProLanding() {
   const router = useRouter()
   const [showWish, setShowWish] = useState(false)
@@ -74,7 +74,8 @@ function AyurVaidyaProLanding() {
       >
         <nav className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold flex items-center">
-            <Leaf className="mr-2" />
+            {/* <Leaf className="mr-2" /> */}
+            <Image src='/app_logo.png' alt="image" height={80} width={80}/>
             Ayur Vaidya Pro
           </Link>
           <motion.ul 
